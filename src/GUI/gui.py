@@ -11,11 +11,8 @@ import threading
 
 
 def main_gui():
-    # Funktion für die Suche
     def search():
-        # Suchbegriff aus der Eingabebox abrufen
         query = entry.get()
-        # Prozesse in der Liste durchsuchen
         for i in range(process_listbox.size()):
             if query.lower() in process_listbox.get(i).lower():
                 pass
