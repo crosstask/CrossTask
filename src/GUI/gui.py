@@ -12,8 +12,8 @@ def main_gui():
         ram_progressbar.set(psutil.virtual_memory().percent/100)
 
         # DISK
-        disk_label.configure(text=f'Disk usage: {psutil.disk_usage('/').percent}%')
-        disk_progressbar.set(psutil.disk_usage('/').percent/100)
+        disk_label.configure(text=f'Disk usage: {psutil.disk_usage("/").percent}%')
+        disk_progressbar.set(psutil.disk_usage("/").percent/100)
 
 
         root.after(1000, update)
@@ -53,7 +53,7 @@ def main_gui():
 
 
     # DISK
-    disk_label = customtkinter.CTkLabel(frame_disk, text=f'Disk usage: {psutil.disk_usage('/').percent}%')
+    disk_label = customtkinter.CTkLabel(frame_disk, text=f'Disk usage: {psutil.disk_usage("/").percent}%')
     disk_label.pack()
 
     disk_progressbar = customtkinter.CTkProgressBar(frame_disk)
