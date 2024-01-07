@@ -1,5 +1,14 @@
+# CrossTask Team
+# Developer: @zlElo
+# Licensed under MIT
+# Libarys: CTkListbox, Customtkinter, Psutil
+
+
 import customtkinter
 import psutil
+from CTkListbox import *
+import threading
+
 
 def main_gui():
     def update():
@@ -15,8 +24,26 @@ def main_gui():
         disk_label.configure(text=f'Disk usage: {psutil.disk_usage("/").percent}%')
         disk_progressbar.set(psutil.disk_usage("/").percent/100)
 
-
         root.after(1000, update)
+
+
+    def update_tasklist():
+        # info
+        reload_label = customtkinter.CTkLabel(tabview.tab("Processes"), text='(Re)load index...')
+        reload_label.pack()
+
+        # Task list
+        # Get the list of all processes
+        processes = psutil.process_iter(['pid', 'name'])
+        # Clear the existing listbox
+        process_listbox.delete(1, "END")
+        # Insert the updated process list into the listbox
+        for proc in processes:
+            process_listbox.insert("END", f"{proc.info['pid']} - {proc.info['name']}")
+
+        
+        reload_label.destroy()
+        root.after(30000, update_tasklist)
 
         
 
@@ -25,15 +52,24 @@ def main_gui():
     root.title('CrossTask')
 
 
+    # Create the Tabbed View
+    tabview = customtkinter.CTkTabview(root)
+    tabview.pack(padx=20, pady=20)
+
+    tabview.add("Overview")  # Overview tab
+    tabview.add("Processes")  # Process tab
+    tabview.set("Overview")  # set overview as currently visible tab
+
+
     # Create Frames
-    frame_cpu = customtkinter.CTkFrame(root)
-    frame_cpu.pack(pady=10)
+    frame_cpu = customtkinter.CTkFrame(master=tabview.tab("Overview"))
+    frame_cpu.pack(pady=25)
 
-    frame_ram = customtkinter.CTkFrame(root)
-    frame_ram.pack(pady=10)
+    frame_ram = customtkinter.CTkFrame(master=tabview.tab("Overview"))
+    frame_ram.pack(pady=25)
 
-    frame_disk = customtkinter.CTkFrame(root)
-    frame_disk.pack(pady=10)
+    frame_disk = customtkinter.CTkFrame(master=tabview.tab("Overview"))
+    frame_disk.pack(pady=25)
 
 
     # CPU
@@ -41,7 +77,7 @@ def main_gui():
     cpu_label.pack()
 
     cpu_progressbar = customtkinter.CTkProgressBar(frame_cpu)
-    cpu_progressbar.pack(pady=15, padx=20)
+    cpu_progressbar.pack(padx=20)
 
 
     # RAM
@@ -49,7 +85,7 @@ def main_gui():
     ram_label.pack()
 
     ram_progressbar = customtkinter.CTkProgressBar(frame_ram)
-    ram_progressbar.pack(pady=15, padx=20)
+    ram_progressbar.pack(padx=20)
 
 
     # DISK
@@ -57,7 +93,20 @@ def main_gui():
     disk_label.pack()
 
     disk_progressbar = customtkinter.CTkProgressBar(frame_disk)
-    disk_progressbar.pack(pady=15, padx=20)
+    disk_progressbar.pack(padx=20)
+
+    
+    # Task list
+    # Create a listbox to display the processes
+    process_listbox = CTkListbox(tabview.tab("Processes"))
+    process_listbox.pack(pady=10)
+
+
+    # threading
+    process_list_thread = threading.Thread(target=lambda: update_tasklist())
+    process_list_thread.start()
+    print('[log] started a thread for process list update')
+
 
     # update loop
     update()
