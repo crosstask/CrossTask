@@ -71,7 +71,7 @@ def main_gui():
         
 
     root = customtkinter.CTk()
-    root.geometry('290x400')
+    root.geometry('290x500')
     root.title('CrossTask')
     root.iconbitmap('src/themes/logo_crosstask.ico')
 
