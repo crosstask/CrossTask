@@ -1,0 +1,5 @@
+// Some config for the program maybe
+{
+    "autorefresh-process-list": "True",
+    "autorefresh-performance-levels": "True"
+}
