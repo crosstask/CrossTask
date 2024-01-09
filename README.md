@@ -19,8 +19,6 @@ CrossTask is an OpenSource, cross-platform task manager written in Python. It ut
 
 - [📁 Project Structure](#project-structure)
 
-- [📝 Project Summary](#project-summary)
-
 - [💻 Stack](#stack)
 
 - [⚙️ Setting Up](#setting-up)
