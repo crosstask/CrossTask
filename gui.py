@@ -172,7 +172,7 @@ class GUI(CTk):
         self.tabview.add('Processes')
         self.tabview.add('Performance') #i think performance sounds better than overview
         self.tabview.set('Processes')
-        self._performanceTab('Processes')
+        self._performanceTab('Performance')
         self.autoupdate = True
         self.update_thread = threading.Thread(target=self.__update_performance_info)
         self.update_thread.daemon = True
@@ -187,19 +187,23 @@ class GUI(CTk):
         
         # CPU
         self.cpu_frame = self.__performanceBaseFrame('CPU Usage', self.tabview.tab(tabName))
-        self.cpu_frame.grid(row=0, column=0, sticky=EW, padx=10)
+        self.cpu_frame.grid(row=0, column=0, sticky=NSEW, padx=10, pady=20)
         
         # GPU
-        self.gpu_frame = self.__performanceBaseFrame('GPU Usage', self.tabview.tab(tabName))
-        self.gpu_frame.grid(row=1, column=0, sticky=EW, padx=10)
+        # self.gpu_frame = self.__performanceBaseFrame('GPU Usage', self.tabview.tab(tabName))
+        # self.gpu_frame.grid(row=1, column=0, sticky=NSEW, padx=10, pady=20)
         
         # RAM
         self.ram_frame = self.__performanceBaseFrame('Memory Usage', self.tabview.tab(tabName))
-        self.ram_frame.grid(row=2, column=0, sticky=EW, padx=10)
+        self.ram_frame.grid(row=1, column=0, sticky=NSEW, padx=10, pady=20)
         
         # DISK
-        self.disk_frame = self.__performanceBaseFrame('Disk Usage', self.tabview.tab(tabName))
-        self.disk_frame.grid(row=3, column=0, sticky=EW, padx=10)
+        for index, disk in enumerate(psutil.disk_partitions()):
+            tmpFrame = self.__performanceBaseFrame(f'Disk Usage ( {disk.mountpoint} )', self.tabview.tab(tabName))
+            # self.disk_frame = self.__performanceBaseFrame('Disk Usage', self.tabview.tab(tabName))
+            tmpFrame.grid(row=2+index, column=0, sticky=NSEW, padx=10, pady=20)
+            tmpFrame.bar.set(psutil.disk_usage(disk.mountpoint).percent/100)
+            tmpFrame.text.configure(text=f'{psutil.disk_usage(disk.mountpoint).percent}%')
    
     def __performanceBaseFrame(self, title:str, master): #This bad boy will do all the performance frames you need >:)
         frame = CTkFrame(master, corner_radius=10)
@@ -216,7 +220,10 @@ class GUI(CTk):
     def __update_performance_info(self):
         while self.autoupdate == True:
             cpuUsage = psutil.cpu_percent(interval=1)
+            ramUsage = psutil.virtual_memory().percent
             self.cpu_frame.bar.set(cpuUsage/100)
             self.cpu_frame.text.configure(text=f'{cpuUsage}%')
+            self.ram_frame.bar.set(ramUsage/100)
+            self.ram_frame.text.configure(text=f'{ramUsage}%')
 
         
