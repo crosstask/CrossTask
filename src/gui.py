@@ -7,7 +7,7 @@
 # MODULES #
 ###########
 from customtkinter import *
-from CTkListbox import *
+from CTkListbox import CTkListbox
 import psutil
 import os
 import threading
@@ -34,14 +34,25 @@ class GUI(CTk):
         self.tabview.add('About')
         self.tabview.set('Processes')
         self.autoupdate = True
+        self.processListVar = StringVar(value=['Process list'])
+        self._processesTab('Processes')
         self._performanceTab('Performance')
         currentTabAction = threading.Thread(target=self.__current_tab_action)
         currentTabAction.daemon = True
         currentTabAction.start() 
 
     def _processesTab(self, tabName:str):
-        ...
-
+        self.tabview.tab(tabName).rowconfigure((0, 2), weight=1)
+        self.tabview.tab(tabName).rowconfigure((1), weight=5)
+        self.tabview.tab(tabName).columnconfigure((0), weight=1)
+        self.searchbar = CTkEntry(self.tabview.tab(tabName), font=('Arial', 20), height=50) 
+        self.processList = CTkListbox(self.tabview.tab(tabName), listvariable=self.processListVar)
+        self.searchbar.grid(row=0, column=0, sticky='EW', padx=30, pady=10)
+        self.processList.grid(row=1, column=0, sticky='NSEW', padx=30, pady=10)
+        self.updateProcessesBtn = CTkButton(self.tabview.tab(tabName), text='Refresh', font=('Arial', 16), command=lambda:update())
+        self.updateProcessesBtn.grid(row=2, column=0, sticky='NS', padx=40)
+        def update():
+            self.autoupdate = True
 
     def _performanceTab(self, tabName:str):
         self.tabview.tab(tabName).rowconfigure((0,1,2,3,4,5), weight=1)
@@ -93,13 +104,27 @@ class GUI(CTk):
             self.ram_frame.bar.set(ramUsage/100)
             self.ram_frame.text.configure(text=f'{ramUsage}%')
 
+    def __update_process_list(self):
+        while self.autoupdate == True and self.tabview.get() == 'Processes':
+          self.processListVar.set([process.name() for process in psutil.process_iter()])
+          self.autoupdate = False
     def __current_tab_action(self):
         # For optimisation: depending on the tab the user is it starts/stops the actions on it, making the program lightweight
         while(True):
             currentTab = self.tabview.get()
             if currentTab == 'Performance':
+                self.autoupdate = True
                 update_thread = threading.Thread(target=self.__update_performance_info)
                 update_thread.daemon = True
                 update_thread.start() 
                 update_thread.join()
+            time.sleep(0.25)
+            if currentTab == 'Processes':
+                if self.autoupdate == True:    
+                    self.updateProcessesBtn.configure(state='disabled')
+                    update_thread = threading.Thread(target=self.__update_process_list)
+                    update_thread.daemon = True
+                    update_thread.start() 
+                    update_thread.join()
+                    self.updateProcessesBtn.configure(state='enabled')
             time.sleep(0.25)
