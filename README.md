@@ -1,6 +1,5 @@
 <p align="center">
-<img src="[logo](https://raw.githubusercontent.com/crosstask/CrossTask/main/content/logo_crosstask-removebg.png)"/>
-</a>
+  <img src="https://raw.githubusercontent.com/crosstask/CrossTask/main/content/logo_crosstask-removebg.png">
 </p>
 
 <p align="center">
