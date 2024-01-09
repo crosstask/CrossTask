@@ -11,9 +11,14 @@ from CTkListbox import *
 import psutil
 import os
 import threading
+import time
+from PIL import Image
 
 
- 
+
+#######
+# GUI #
+#######
 class GUI(CTk):
     def __init__(self):
         super().__init__()
@@ -26,13 +31,13 @@ class GUI(CTk):
         self.tabview.grid(row=0, column=0, sticky=NSEW, padx=10, pady=10)
         self.tabview.add('Processes')
         self.tabview.add('Performance')
+        self.tabview.add('About')
         self.tabview.set('Processes')
-        self._performanceTab('Performance')
         self.autoupdate = True
-        self.update_thread = threading.Thread(target=self.__update_performance_info)
-        self.update_thread.daemon = True
-        self.update_thread.start()
-
+        self._performanceTab('Performance')
+        currentTabAction = threading.Thread(target=self.__current_tab_action)
+        currentTabAction.daemon = True
+        currentTabAction.start() 
 
     def _processesTab(self, tabName:str):
         ...
@@ -62,8 +67,10 @@ class GUI(CTk):
             tmpFrame.bar.set(psutil.disk_usage(disk.mountpoint).percent/100)
             tmpFrame.text.configure(text=f'{psutil.disk_usage(disk.mountpoint).percent}%')
    
-
-    def __performanceBaseFrame(self, title:str, master): 
+    def aboutTab(self, tabName:str):
+        logo = CTkImage(Image.open("./content/logo_crosstask-removebg.png"), size=(500, 500))
+        ...
+    def __performanceBaseFrame(self, title:str, master):
         frame = CTkFrame(master, corner_radius=10)
         frame.rowconfigure((0,1), weight=1)
         frame.columnconfigure((0), weight=4)
@@ -78,10 +85,21 @@ class GUI(CTk):
     
 
     def __update_performance_info(self):
-        while self.autoupdate == True:
+        while self.autoupdate == True and self.tabview.get() == 'Performance':
             cpuUsage = psutil.cpu_percent(interval=1)
             ramUsage = psutil.virtual_memory().percent
             self.cpu_frame.bar.set(cpuUsage/100)
             self.cpu_frame.text.configure(text=f'{cpuUsage}%')
             self.ram_frame.bar.set(ramUsage/100)
             self.ram_frame.text.configure(text=f'{ramUsage}%')
+
+    def __current_tab_action(self):
+        # For optimisation: depending on the tab the user is it starts/stops the actions on it, making the program lightweight
+        while(True):
+            currentTab = self.tabview.get()
+            if currentTab == 'Performance':
+                update_thread = threading.Thread(target=self.__update_performance_info)
+                update_thread.daemon = True
+                update_thread.start() 
+                update_thread.join()
+            time.sleep(0.25)
