@@ -94,7 +94,7 @@ python main.py
 
 <p align="center">
 <a href="https://github.com/crosstask/CrossTask/graphs/contributors" target="_blank">
-<img src="https://contrib.rocks/image?repo=crosstask/CrossTask" width="100%" alt="" />
+<img src="https://contrib.rocks/image?repo=crosstask/CrossTask" width="15%" alt="" />
 </a>
 </p>
 
