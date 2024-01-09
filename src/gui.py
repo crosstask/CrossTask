@@ -7,10 +7,12 @@
 # MODULES #
 ###########
 from customtkinter import *
-import psutil
 from CTkListbox import *
+import psutil
 import os
 import threading
+
+
  
 class GUI(CTk):
     def __init__(self):
@@ -34,6 +36,8 @@ class GUI(CTk):
 
     def _processesTab(self, tabName:str):
         ...
+
+
     def _performanceTab(self, tabName:str):
         self.tabview.tab(tabName).rowconfigure((0,1,2,3,4,5), weight=1)
         self.tabview.tab(tabName).columnconfigure((0), weight=1)
@@ -58,6 +62,7 @@ class GUI(CTk):
             tmpFrame.bar.set(psutil.disk_usage(disk.mountpoint).percent/100)
             tmpFrame.text.configure(text=f'{psutil.disk_usage(disk.mountpoint).percent}%')
    
+
     def __performanceBaseFrame(self, title:str, master): 
         frame = CTkFrame(master, corner_radius=10)
         frame.rowconfigure((0,1), weight=1)
@@ -71,6 +76,7 @@ class GUI(CTk):
         frame.text.grid(row=0, column=1, rowspan=2)
         return frame
     
+
     def __update_performance_info(self):
         while self.autoupdate == True:
             cpuUsage = psutil.cpu_percent(interval=1)
