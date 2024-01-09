@@ -1,7 +1,7 @@
 # CrossTask Team
 # Developers: @zlElo and @DarkGloves
 # Licensed under GPL 3.0
-# Libarys: CTkListbox, Customtkinter, Psutil <= Do a fucking requierements.txt plz :)
+
 
 ###########
 # MODULES #
