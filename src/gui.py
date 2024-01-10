@@ -7,6 +7,7 @@
 # MODULES #
 ###########
 from customtkinter import *
+from tkinter import *
 from CTkListbox import CTkListbox
 import psutil
 import os
@@ -22,17 +23,33 @@ from PIL import Image
 class GUI(CTk):
     def __init__(self):
         super().__init__()
+        # window configuration
         self.title('CrossTask')
-        self.geometry("600x800")
+        self.geometry("450x630")
         self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico'))
         self.rowconfigure((0), weight=1)
         self.columnconfigure((0), weight=1)
+
+        # tabview
         self.tabview = CTkTabview(self)
         self.tabview.grid(row=0, column=0, sticky=NSEW, padx=10, pady=10)
         self.tabview.add('Processes')
         self.tabview.add('Performance')
-        self.tabview.add('About')
         self.tabview.set('Processes')
+
+        # menubar
+        self.menubar = Menu(self)
+        self.config(menu=self.menubar)
+        self.filemenu = Menu(self.menubar, tearoff=0)
+        self.filemenu.add_command(label="New")
+        self.filemenu.add_command(label="Open")
+        self.filemenu.add_command(label="Save")
+        self.filemenu.add_separator()
+        self.filemenu.add_command(label="Exit", command=self.quit)
+        self.menubar.add_cascade(label="File", menu=self.filemenu)
+
+        # vars
+        self._mode = self._get_appearance_mode()
         self.autoupdate = True
         self.processListVar = StringVar(value=['Process list'])
         self._processesTab('Processes')
@@ -46,7 +63,12 @@ class GUI(CTk):
         self.tabview.tab(tabName).rowconfigure((1), weight=5)
         self.tabview.tab(tabName).columnconfigure((0), weight=1)
         self.searchbar = CTkEntry(self.tabview.tab(tabName), font=('Arial', 20), height=50) 
-        self.processList = CTkListbox(self.tabview.tab(tabName), listvariable=self.processListVar)
+
+        if self._mode == 'light':
+            self.processList = CTkListbox(self.tabview.tab(tabName), listvariable=self.processListVar, text_color='black')
+        else:
+            self.processList = CTkListbox(self.tabview.tab(tabName), listvariable=self.processListVar)
+            
         self.searchbar.grid(row=0, column=0, sticky='EW', padx=30, pady=10)
         self.processList.grid(row=1, column=0, sticky='NSEW', padx=30, pady=10)
         self.updateProcessesBtn = CTkButton(self.tabview.tab(tabName), text='Refresh', font=('Arial', 16), command=lambda:update())
@@ -77,10 +99,8 @@ class GUI(CTk):
             tmpFrame.grid(row=2+index, column=0, sticky=NSEW, padx=10, pady=20)
             tmpFrame.bar.set(psutil.disk_usage(disk.mountpoint).percent/100)
             tmpFrame.text.configure(text=f'{psutil.disk_usage(disk.mountpoint).percent}%')
-   
-    def aboutTab(self, tabName:str):
-        logo = CTkImage(Image.open("./content/logo_crosstask-removebg.png"), size=(500, 500))
-        ...
+
+
     def __performanceBaseFrame(self, title:str, master):
         frame = CTkFrame(master, corner_radius=10)
         frame.rowconfigure((0,1), weight=1)
@@ -94,7 +114,6 @@ class GUI(CTk):
         frame.text.grid(row=0, column=1, rowspan=2)
         return frame
     
-
     def __update_performance_info(self):
         while self.autoupdate == True and self.tabview.get() == 'Performance':
             cpuUsage = psutil.cpu_percent(interval=1)
@@ -108,6 +127,7 @@ class GUI(CTk):
         while self.autoupdate == True and self.tabview.get() == 'Processes':
           self.processListVar.set([process.name() for process in psutil.process_iter()])
           self.autoupdate = False
+
     def __current_tab_action(self):
         # For optimisation: depending on the tab the user is it starts/stops the actions on it, making the program lightweight
         while(True):
