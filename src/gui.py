@@ -9,6 +9,8 @@
 from customtkinter import *
 from tkinter import *
 from CTkListbox import CTkListbox
+from src.window.about_developer import about_developer_win
+from src.window.about_program import about_program_win
 import psutil
 import os
 import threading
@@ -40,13 +42,21 @@ class GUI(CTk):
         # menubar
         self.menubar = Menu(self)
         self.config(menu=self.menubar)
-        self.filemenu = Menu(self.menubar, tearoff=0)
+        
 
-        # file
+        # menubar - file
+        self.filemenu = Menu(self.menubar, tearoff=0)
         self.filemenu.add_command(label="Reload", command=lambda: _update())
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.quit)
         self.menubar.add_cascade(label="File", menu=self.filemenu)
+
+        # menubar - about
+        self.aboutmenu = Menu(self.menubar, tearoff=0)
+        self.aboutmenu.add_command(label="Developers", command=about_developer_win)
+        self.aboutmenu.add_command(label="About", command=about_program_win)
+        self.menubar.add_cascade(label="Help", menu=self.aboutmenu)
+        
 
         # vars
         self._mode = self._get_appearance_mode()
