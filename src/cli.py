@@ -1,8 +1,12 @@
+# CrossTask Team
+# Developers: @zlElo and @DarkGloves
+# Licensed under GPL 3.0
+
 import argparse
 import psutil 
 
 def cli():
-    parser = argparse.ArgumentParser(description='Example program with command-line options')
+    parser = argparse.ArgumentParser(description='CLI of CrossTask with command-line options')
 
     parser.add_argument('--get', '-g', nargs='*', help='Get the percentage of CPU/RAM used')
 

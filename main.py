@@ -1,3 +1,7 @@
+# CrossTask Team
+# Developers: @zlElo and @DarkGloves
+# Licensed under GPL 3.0
+
 from src.gui import GUI
 from src.cli import cli
 import sys

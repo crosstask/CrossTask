@@ -7,7 +7,7 @@
 # MODULES #
 ###########
 from customtkinter import *
-from tkinter import *
+from tkinter import Menu
 from CTkListbox import CTkListbox
 from src.window.about_developer import about_developer_win
 from src.window.about_program import about_program_win
@@ -15,7 +15,6 @@ import psutil
 import os
 import threading
 import time
-from PIL import Image
 
 
 
@@ -40,9 +39,8 @@ class GUI(CTk):
         self.tabview.set('Processes')
 
         # menubar
-        self.menubar = Menu(self)
-        self.config(menu=self.menubar)
-        
+        self.menubar = Menu(self)       
+        self.config(menu=self.menubar) 
 
         # menubar - file
         self.filemenu = Menu(self.menubar, tearoff=0)
@@ -57,7 +55,6 @@ class GUI(CTk):
         self.aboutmenu.add_command(label="About", command=about_program_win)
         self.menubar.add_cascade(label="Help", menu=self.aboutmenu)
         
-
         # vars
         self._mode = self._get_appearance_mode()
         self.autoupdate = True
@@ -154,10 +151,10 @@ class GUI(CTk):
             time.sleep(0.25)
             if currentTab == 'Processes':
                 if self.autoupdate == True:    
-                    # self.updateProcessesBtn.configure(state='disabled')
+                    self.title('CrossTask - loading...')
                     update_thread = threading.Thread(target=self.__update_process_list)
                     update_thread.daemon = True
                     update_thread.start() 
                     update_thread.join()
-                    # self.updateProcessesBtn.configure(state='enabled')
+                    self.title('CrossTask')
             time.sleep(0.25)
