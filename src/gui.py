@@ -41,9 +41,9 @@ class GUI(CTk):
         self.menubar = Menu(self)
         self.config(menu=self.menubar)
         self.filemenu = Menu(self.menubar, tearoff=0)
-        self.filemenu.add_command(label="New")
-        self.filemenu.add_command(label="Open")
-        self.filemenu.add_command(label="Save")
+
+        # file
+        self.filemenu.add_command(label="Reload", command=lambda: _update())
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.quit)
         self.menubar.add_cascade(label="File", menu=self.filemenu)
@@ -58,6 +58,9 @@ class GUI(CTk):
         currentTabAction.daemon = True
         currentTabAction.start() 
 
+        def _update():
+            self.autoupdate = True
+
     def _processesTab(self, tabName:str):
         self.tabview.tab(tabName).rowconfigure((0, 2), weight=1)
         self.tabview.tab(tabName).rowconfigure((1), weight=5)
@@ -68,13 +71,13 @@ class GUI(CTk):
             self.processList = CTkListbox(self.tabview.tab(tabName), listvariable=self.processListVar, text_color='black')
         else:
             self.processList = CTkListbox(self.tabview.tab(tabName), listvariable=self.processListVar)
-            
+
         self.searchbar.grid(row=0, column=0, sticky='EW', padx=30, pady=10)
         self.processList.grid(row=1, column=0, sticky='NSEW', padx=30, pady=10)
-        self.updateProcessesBtn = CTkButton(self.tabview.tab(tabName), text='Refresh', font=('Arial', 16), command=lambda:update())
-        self.updateProcessesBtn.grid(row=2, column=0, sticky='NS', padx=40)
-        def update():
-            self.autoupdate = True
+        # self.updateProcessesBtn = CTkButton(self.tabview.tab(tabName), text='Refresh', font=('Arial', 16), command=lambda:update())
+        # self.updateProcessesBtn.grid(row=2, column=0, sticky='NS', padx=40)
+        # def update():
+        #    self.autoupdate = True
 
     def _performanceTab(self, tabName:str):
         self.tabview.tab(tabName).rowconfigure((0,1,2,3,4,5), weight=1)
@@ -141,10 +144,10 @@ class GUI(CTk):
             time.sleep(0.25)
             if currentTab == 'Processes':
                 if self.autoupdate == True:    
-                    self.updateProcessesBtn.configure(state='disabled')
+                    # self.updateProcessesBtn.configure(state='disabled')
                     update_thread = threading.Thread(target=self.__update_process_list)
                     update_thread.daemon = True
                     update_thread.start() 
                     update_thread.join()
-                    self.updateProcessesBtn.configure(state='enabled')
+                    # self.updateProcessesBtn.configure(state='enabled')
             time.sleep(0.25)
