@@ -22,3 +22,4 @@ def about_program_win():
 
     root.mainloop()
 
+#about_program_win()

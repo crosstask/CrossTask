@@ -9,8 +9,8 @@
 from customtkinter import *
 from tkinter import Menu
 from CTkListbox import CTkListbox
-from src.window.about_developer import about_developer_win
-from src.window.about_program import about_program_win
+from src.popups.about_developer import DevelopersPopup
+from src.popups.about_program import about_program_win
 import psutil
 import os
 import threading
@@ -51,8 +51,8 @@ class GUI(CTk):
 
         # menubar - about
         self.aboutmenu = Menu(self.menubar, tearoff=0)
-        self.aboutmenu.add_command(label="Developers", command=about_developer_win)
-        self.aboutmenu.add_command(label="About", command=about_program_win)
+        self.aboutmenu.add_command(label="Developers", command=lambda : DevelopersPopup().grab_set())
+        self.aboutmenu.add_command(label="About")
         self.menubar.add_cascade(label="Help", menu=self.aboutmenu)
         
         # vars
