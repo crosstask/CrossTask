@@ -10,11 +10,13 @@ from customtkinter import *
 from tkinter import Menu
 from CTkListbox import CTkListbox
 from src.popups.about_developer import DevelopersPopup
-from src.popups.about_program import about_program_win
+from src.popups.about_program import AboutPopup
+from src.settings.settings import SettingsWindow
 import psutil
 import os
 import threading
 import time
+#import cpuinfo
 
 
 
@@ -45,6 +47,7 @@ class GUI(CTk):
         # menubar - file
         self.filemenu = Menu(self.menubar, tearoff=0)
         self.filemenu.add_command(label="Reload", command=lambda: _update())
+        self.filemenu.add_command(label="Settings", command=lambda: SettingsWindow().grab_set())
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.quit)
         self.menubar.add_cascade(label="File", menu=self.filemenu)
@@ -52,7 +55,7 @@ class GUI(CTk):
         # menubar - about
         self.aboutmenu = Menu(self.menubar, tearoff=0)
         self.aboutmenu.add_command(label="Developers", command=lambda : DevelopersPopup().grab_set())
-        self.aboutmenu.add_command(label="About")
+        self.aboutmenu.add_command(label="About", command=lambda: AboutPopup().grab_set())
         self.menubar.add_cascade(label="Help", menu=self.aboutmenu)
         
         # vars
@@ -89,8 +92,9 @@ class GUI(CTk):
     def _performanceTab(self, tabName:str):
         self.tabview.tab(tabName).rowconfigure((0,1,2,3,4,5), weight=1)
         self.tabview.tab(tabName).columnconfigure((0), weight=1)
-        
+
         # CPU
+        # info = cpuinfo.get_cpu_info_from_registry()
         self.cpu_frame = self.__performanceBaseFrame('CPU Usage', self.tabview.tab(tabName))
         self.cpu_frame.grid(row=0, column=0, sticky=NSEW, padx=10, pady=20)
         
@@ -110,12 +114,12 @@ class GUI(CTk):
             tmpFrame.bar.set(psutil.disk_usage(disk.mountpoint).percent/100)
             tmpFrame.text.configure(text=f'{psutil.disk_usage(disk.mountpoint).percent}%')
 
-
     def __performanceBaseFrame(self, title:str, master):
         frame = CTkFrame(master, corner_radius=10)
         frame.rowconfigure((0,1), weight=1)
         frame.columnconfigure((0), weight=4)
         frame.columnconfigure((1), weight=1)
+
         CTkLabel(frame, text=title, font=('Arial', 16)).grid(row=0, column=0, sticky=W, padx=10, pady=10)
         frame.bar = CTkProgressBar(frame)
         frame.bar.set(0)

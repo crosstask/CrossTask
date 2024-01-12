@@ -1,5 +1,4 @@
-// Some config for the program maybe
 {
-    "autorefresh-process-list": "True",
-    "autorefresh-performance-levels": "True"
+    "version": "1.03-beta",
+    "autorefresh-state": "False"
 }

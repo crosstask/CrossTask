@@ -10,5 +10,8 @@ if len(sys.argv) > 1:
     cli()
 
 else:
-    app = GUI()
-    app.mainloop()
+    try:
+        app = GUI()
+        app.mainloop()
+    except Exception as e:
+        print(e)

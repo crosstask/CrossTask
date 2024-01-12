@@ -3,23 +3,27 @@
 # Licensed under GPL 3.0
 
 import customtkinter
+from customtkinter import CTkToplevel
 from PIL import Image
+import json
 
 
-def about_program_win():
-    root = customtkinter.CTk()
-    root.geometry('350x200')
-    root.title('About')
+class AboutPopup(CTkToplevel):
+    def __init__(self):
+        super().__init__()
+        self.geometry('350x215')
+        self.resizable(False, False)
+        self.title('About')
+        self.img = customtkinter.CTkImage(light_image=Image.open('content/logo_crosstask-removebg.png'), dark_image=Image.open('content/logo_crosstask-removebg.png'), size=(200, 200))
+        self.label = customtkinter.CTkLabel(self, image=self.img, text='')
+        self.label.grid(column=0, row=0)
 
-    img = customtkinter.CTkImage(light_image=Image.open('content/logo_crosstask-removebg.png'), dark_image=Image.open('content/logo_crosstask-removebg.png'), size=(200, 200))
-    label = customtkinter.CTkLabel(root, image=img, text='')
-    label.grid(column=0, row=0)
+        # read settings
+        with open('config/settings.json', 'r') as f:
+            data = json.load(f)
+            _version = data['version']
+        f.close()
 
-    # infos
-    program_info = customtkinter.CTkLabel(root, text='CrossTask\n\nVersion: v1.02-beta')
-    program_info.grid(column=4, row=0)
-
-
-    root.mainloop()
-
-#about_program_win()
+        # infos
+        self.program_info = customtkinter.CTkLabel(self, text=f'CrossTask\n\nVersion: v{_version}')
+        self.program_info.grid(column=4, row=0)
