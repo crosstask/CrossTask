@@ -6,7 +6,7 @@ import argparse
 import psutil 
 
 def cli():
-    parser = argparse.ArgumentParser(description='CLI of CrossTask with command-line options')
+    parser = argparse.ArgumentParser(description='CLI of CrossTask')
 
     parser.add_argument('--get', '-g', nargs='*', help='Get the percentage of CPU/RAM used')
 
@@ -15,13 +15,10 @@ def cli():
     if args.get:
         for arg in args.get:
             if arg.lower() == 'cpu':
-                print(psutil.cpu_percent(1))
+                print(f'CPU usage: {psutil.cpu_percent(1)}%')
             elif arg.lower() == 'ram':
-                print(psutil.virtual_memory().percent)
+                print(f'RAM usage: {psutil.virtual_memory().percent}%')
             else:
                 print(f'\nStat not found "{arg}", avaiable options:\n    cpu\n    ram')
                 for disk in psutil.disk_partitions():
                     print(f'    {disk.mountpoint}')
-
-
-

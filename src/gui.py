@@ -16,6 +16,7 @@ import psutil
 import os
 import threading
 import time
+import platform
 #import cpuinfo
 
 
@@ -29,9 +30,19 @@ class GUI(CTk):
         # window configuration
         self.title('CrossTask')
         self.geometry("450x630")
-        self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico'))
+
+        # platform check for window icon
+        operating_system = platform.system()
+        if  operating_system == 'Windows':
+            self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico'))
+        elif operating_system == 'Linux':
+            pass
+        else:
+            self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico'))
+
         self.rowconfigure((0), weight=1)
         self.columnconfigure((0), weight=1)
+        
 
         # tabview
         self.tabview = CTkTabview(self)

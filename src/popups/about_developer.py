@@ -6,6 +6,7 @@ from customtkinter import *
 from PIL import Image
 import os
 import webbrowser
+import platform
 
 
 class Icons():
@@ -20,9 +21,20 @@ class DevelopersPopup(CTkToplevel):
         self.geometry('400x190')
         self.resizable(False, False)
         self.title('Developers')
+
         CTkLabel(self, text='This project has been developed by:', font=('Arial', 16, 'bold')).pack(pady=10)
         self._developerFrame('DarkGloves', 'https://github.com/DarkGloves').pack(pady=15)
         self._developerFrame('zlElo', 'https://github.com/zlElo').pack(pady=(0,5))
+
+        # platform check for window icon
+        operating_system = platform.system()
+        if  operating_system == 'Windows':
+            self.after(200, lambda: self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico')))
+        elif operating_system == 'Linux':
+            pass
+        else:
+            self.after(200, lambda: self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico')))
+        
 
     def _developerFrame(self, devName:str, githubProfile:str=False, mailAdress:str=False):
         frame = CTkFrame(self, corner_radius=5)
