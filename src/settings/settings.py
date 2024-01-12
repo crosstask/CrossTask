@@ -14,18 +14,19 @@ class SettingsWindow(CTkToplevel):
         self.geometry('350x250')
         self.resizable(False, False)
         self.title('Settings')
-        
-        # platform check for window icon
-        operating_system = platform.system()
-        if  operating_system == 'Windows':
-            self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico'))
-        elif operating_system == 'Linux':
-            pass
-        else:
-            self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico'))
 
         # read settings
         with open('config/settings.json', 'r') as f:
             data = json.load(f)
             _version = data['autorefresh-state']
         f.close()
+
+
+        # platform check for window icon
+        operating_system = platform.system()
+        if  operating_system == 'Windows':
+            self.after(200, lambda: self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico')))
+        elif operating_system == 'Linux':
+            pass
+        else:
+            self.after(200, lambda: self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico')))

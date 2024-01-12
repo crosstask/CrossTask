@@ -12,6 +12,7 @@ from CTkListbox import CTkListbox
 from src.popups.about_developer import DevelopersPopup
 from src.popups.about_program import AboutPopup
 from src.settings.settings import SettingsWindow
+from CTkMessagebox import CTkMessagebox
 import psutil
 import os
 import threading
@@ -94,6 +95,7 @@ class GUI(CTk):
             self.processList = CTkListbox(self.tabview.tab(tabName), listvariable=self.processListVar)
 
         self.searchbar.grid(row=0, column=0, sticky='EW', padx=30, pady=10)
+        self.searchbar.bind("<Return>", self.__search_process_list)
         self.processList.grid(row=1, column=0, sticky='NSEW', padx=30, pady=10)
         # self.updateProcessesBtn = CTkButton(self.tabview.tab(tabName), text='Refresh', font=('Arial', 16), command=lambda:update())
         # self.updateProcessesBtn.grid(row=2, column=0, sticky='NS', padx=40)
@@ -152,6 +154,14 @@ class GUI(CTk):
         while self.autoupdate == True and self.tabview.get() == 'Processes':
           self.processListVar.set([process.name() for process in psutil.process_iter()])
           self.autoupdate = False
+
+    def __search_process_list(self, event):
+        matchstr = self.searchbar.get()
+        process_names = [element.name() for element in psutil.process_iter() if matchstr in element.name()]
+        if not process_names:
+            CTkMessagebox(title="Error", message="No matching results could be found!", icon="cancel")
+            return
+        self.processListVar.set(process_names)
 
     def __current_tab_action(self):
         # For optimisation: depending on the tab the user is it starts/stops the actions on it, making the program lightweight
