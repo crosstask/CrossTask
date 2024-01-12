@@ -33,6 +33,7 @@ class AboutPopup(CTkToplevel):
 
         # platform check for window icon
         operating_system = platform.system()
+        print(os.path.join(os.getcwd(), 'img', 'bitmap.ico'))
         if  operating_system == 'Windows':
             self.after(200, lambda: self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico')))
         elif operating_system == 'Linux':

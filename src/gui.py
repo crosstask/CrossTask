@@ -18,10 +18,16 @@ import os
 import threading
 import time
 import platform
-#import cpuinfo
+from PIL import Image
 
-
-
+#########
+# Icons # https://lucide.dev <3
+#########
+class Icons():
+    def __init__(self, size:tuple) -> None:
+        self.refresh_list = CTkImage(Image.open(os.path.join(os.getcwd(), 'img', 'light', 'refresh_list.png')), Image.open(os.path.join(os.getcwd(), 'img', 'dark', 'refresh_list.png')), size=size)
+        self.mail = CTkImage(Image.open(os.path.join(os.getcwd(), 'img', 'light', 'mail.png')), Image.open(os.path.join(os.getcwd(), 'img', 'dark', 'mail.png')), size=size)
+        self.telegram = CTkImage(Image.open(os.path.join(os.getcwd(), 'img', 'light', 'telegram.png')), Image.open(os.path.join(os.getcwd(), 'img', 'dark', 'telegram.png')), size=size)
 #######
 # GUI #
 #######
@@ -111,10 +117,6 @@ class GUI(CTk):
         self.cpu_frame = self.__performanceBaseFrame('CPU Usage', self.tabview.tab(tabName))
         self.cpu_frame.grid(row=0, column=0, sticky=NSEW, padx=10, pady=20)
         
-        # GPU
-        # self.gpu_frame = self.__performanceBaseFrame('GPU Usage', self.tabview.tab(tabName))
-        # self.gpu_frame.grid(row=1, column=0, sticky=NSEW, padx=10, pady=20)
-        
         # RAM
         self.ram_frame = self.__performanceBaseFrame('Memory Usage', self.tabview.tab(tabName))
         self.ram_frame.grid(row=1, column=0, sticky=NSEW, padx=10, pady=20)
@@ -132,7 +134,6 @@ class GUI(CTk):
         frame.rowconfigure((0,1), weight=1)
         frame.columnconfigure((0), weight=4)
         frame.columnconfigure((1), weight=1)
-
         CTkLabel(frame, text=title, font=('Arial', 16)).grid(row=0, column=0, sticky=W, padx=10, pady=10)
         frame.bar = CTkProgressBar(frame)
         frame.bar.set(0)
@@ -152,8 +153,11 @@ class GUI(CTk):
 
     def __update_process_list(self):
         while self.autoupdate == True and self.tabview.get() == 'Processes':
+          top = self.__loadingProcessesSplash() 
           self.processListVar.set([process.name() for process in psutil.process_iter()])
           self.autoupdate = False
+          top.destroy()
+        
 
     def __search_process_list(self, event):
         matchstr = self.searchbar.get()
@@ -176,10 +180,20 @@ class GUI(CTk):
             time.sleep(0.25)
             if currentTab == 'Processes':
                 if self.autoupdate == True:    
-                    self.title('CrossTask - loading...')
                     update_thread = threading.Thread(target=self.__update_process_list)
                     update_thread.daemon = True
                     update_thread.start() 
                     update_thread.join()
-                    self.title('CrossTask')
             time.sleep(0.25)
+    def __loadingProcessesSplash(self):
+        def disable():
+            pass
+        top = CTkToplevel()
+        top.overrideredirect(True)
+        top.geometry('400x200')
+        top.protocol('WM_DELETE_WINDOW', disable)
+        CTkLabel(top, text='Loading process list,\nplease wait...', font=('Arial', 16, 'bold')).pack(pady=20)
+        CTkLabel(top, text='This may take a few seconds...', font=('Arial', 14)).pack(pady=20)
+        top.deiconify()
+        top.grab_set()
+        return top
