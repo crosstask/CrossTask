@@ -30,6 +30,7 @@ class Icons():
         self.refresh_list = CTkImage(Image.open(os.path.join(os.getcwd(), 'img', 'light', 'refresh_list.png')), Image.open(os.path.join(os.getcwd(), 'img', 'dark', 'refresh_list.png')), size=size)
         self.mail = CTkImage(Image.open(os.path.join(os.getcwd(), 'img', 'light', 'mail.png')), Image.open(os.path.join(os.getcwd(), 'img', 'dark', 'mail.png')), size=size)
         self.telegram = CTkImage(Image.open(os.path.join(os.getcwd(), 'img', 'light', 'telegram.png')), Image.open(os.path.join(os.getcwd(), 'img', 'dark', 'telegram.png')), size=size)
+
 #######
 # GUI #
 #######

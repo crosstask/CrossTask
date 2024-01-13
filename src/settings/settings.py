@@ -2,7 +2,8 @@
 # Developers: @zlElo and @DarkGloves
 # Licensed under GPL 3.0
 
-from customtkinter import CTkToplevel
+from customtkinter import *
+import customtkinter
 import json
 import platform
 import os
@@ -18,9 +19,17 @@ class SettingsWindow(CTkToplevel):
         # read settings
         with open('config/settings.json', 'r') as f:
             data = json.load(f)
-            _version = data['autorefresh-state']
+            _version = data['theme']
         f.close()
 
+        self.frame = CTkFrame(self)
+        self.frame.pack(pady=10)
+
+        # theme selection
+        combobox_var = customtkinter.StringVar(value=_version)
+        CTkLabel(self.frame, text='Theme:').pack()
+        self.theme_selection_ = CTkComboBox(self.frame, values=["System", "Dark", "White"], variable=combobox_var)
+        self.theme_selection_.pack()
 
         # platform check for window icon
         operating_system = platform.system()
