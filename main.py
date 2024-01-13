@@ -10,6 +10,5 @@ if len(sys.argv) > 1:
     cli()
 
 else:
-
-        app = GUI()
-        app.mainloop()
+    app = GUI()
+    app.mainloop()

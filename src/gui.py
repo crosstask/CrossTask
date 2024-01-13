@@ -10,9 +10,11 @@ from customtkinter import *
 from tkinter import Menu
 from CTkListbox import CTkListbox
 from src.popups.about_developer import DevelopersPopup
+from PIL import Image, ImageTk, ImageFilter, ImageGrab
 from src.popups.about_program import AboutPopup
 from src.settings.settings import SettingsWindow
 from CTkMessagebox import CTkMessagebox
+from tkinter import PhotoImage
 import psutil
 import os
 import threading
@@ -153,12 +155,16 @@ class GUI(CTk):
 
     def __update_process_list(self):
         while self.autoupdate == True and self.tabview.get() == 'Processes':
-          top = self.__loadingProcessesSplash() 
-          self.processListVar.set([process.name() for process in psutil.process_iter()])
-          self.autoupdate = False
-          top.destroy()
+            background_label, background_image = self.__loadingProcessesSplash() 
+            self.processListVar.set([process.name() for process in psutil.process_iter()])
+            self.autoupdate = False
+            # Verschwommenes Bild und Label entfernen
+            background_label.destroy()
+            background_image.__del__()
+            self.update()
+            os.remove('cache/temp_screenshot.png')
+            os.remove('cache/blurred_screenshot.png')
         
-
     def __search_process_list(self, event):
         matchstr = self.searchbar.get()
         process_names = [element.name() for element in psutil.process_iter() if matchstr in element.name()]
@@ -185,15 +191,27 @@ class GUI(CTk):
                     update_thread.start() 
                     update_thread.join()
             time.sleep(0.25)
+
     def __loadingProcessesSplash(self):
-        def disable():
-            pass
-        top = CTkToplevel()
-        top.overrideredirect(True)
-        top.geometry('400x200')
-        top.protocol('WM_DELETE_WINDOW', disable)
-        CTkLabel(top, text='Loading process list,\nplease wait...', font=('Arial', 16, 'bold')).pack(pady=20)
-        CTkLabel(top, text='This may take a few seconds...', font=('Arial', 14)).pack(pady=20)
-        top.deiconify()
-        top.grab_set()
-        return top
+        # capture window
+        self.update()
+        x = self.winfo_rootx()
+        y = self.winfo_rooty()
+        x1 = x + self.winfo_width()
+        y1 = y + self.winfo_height()
+        ImageGrab.grab().crop((x, y, x1, y1)).save("cache/temp_screenshot.png")
+
+        # blur image
+        img = Image.open("cache/temp_screenshot.png")
+        img = img.filter(ImageFilter.GaussianBlur(radius=10))
+        img.save("cache/blurred_screenshot.png")
+
+        # set as backround
+        background_image = ImageTk.PhotoImage(file="cache/blurred_screenshot.png")
+        background_label = CTkLabel(self, text='Loading...', image=background_image)
+        background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+        # load blured picture
+        self.update()
+
+        return background_label, background_image
