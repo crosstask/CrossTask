@@ -17,7 +17,6 @@ CrossTask is an OpenSource, cross-platform task manager written in Python. It ut
 
 ## 🔍 Table of Contents
 
-- [📁 Project Structure](#project-structure)
 
 - [💻 Stack](#stack)
 
@@ -29,48 +28,6 @@ CrossTask is an OpenSource, cross-platform task manager written in Python. It ut
 
 - [📄 License](#license)
 
-## 📁 Project Structure
-
-```bash
-├── LICENSE
-├── README.md
-├── cache
-│   └── info.txt
-├── config
-│   └── settings.json
-├── content
-│   ├── logo crosstask.jpg
-│   └── logo_crosstask-removebg.png
-├── img
-│   ├── bitmap.ico
-│   ├── dark
-│   │   ├── debug.png
-│   │   ├── github.png
-│   │   ├── mail.png
-│   │   ├── refresh.png
-│   │   ├── refresh_list.png
-│   │   ├── skull.png
-│   │   └── telegram.png
-│   ├── light
-│   │   ├── debug.png
-│   │   ├── github.png
-│   │   ├── mail.png
-│   │   ├── refresh.png
-│   │   ├── refresh_list.png
-│   │   ├── skull.png
-│   │   └── telegram.png
-│   └── loading.gif
-├── main.py
-├── requirements.txt
-└── src
-    ├── cli.py
-    ├── gui.py
-    ├── popups
-    │   ├── about_developer.py
-    │   └── about_program.py
-    └── settings
-        └── settings.py
-```
 
 ## 📝 Project Summary
 
