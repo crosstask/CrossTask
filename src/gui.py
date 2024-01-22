@@ -21,6 +21,8 @@ import threading
 import time
 import platform
 from PIL import Image
+import re
+import pyperclip
 
 #########
 # Icons # https://lucide.dev <3
@@ -28,8 +30,9 @@ from PIL import Image
 class Icons():
     def __init__(self, size:tuple) -> None:
         self.refresh_list = CTkImage(Image.open(os.path.join(os.getcwd(), 'img', 'light', 'refresh_list.png')), Image.open(os.path.join(os.getcwd(), 'img', 'dark', 'refresh_list.png')), size=size)
-        self.mail = CTkImage(Image.open(os.path.join(os.getcwd(), 'img', 'light', 'mail.png')), Image.open(os.path.join(os.getcwd(), 'img', 'dark', 'mail.png')), size=size)
-        self.telegram = CTkImage(Image.open(os.path.join(os.getcwd(), 'img', 'light', 'telegram.png')), Image.open(os.path.join(os.getcwd(), 'img', 'dark', 'telegram.png')), size=size)
+        self.refresh = CTkImage(Image.open(os.path.join(os.getcwd(), 'img', 'light', 'refresh.png')), Image.open(os.path.join(os.getcwd(), 'img', 'dark', 'refresh.png')), size=size)
+        self.skull = CTkImage(Image.open(os.path.join(os.getcwd(), 'img', 'light', 'skull.png')), Image.open(os.path.join(os.getcwd(), 'img', 'dark', 'skull.png')), size=size)
+        self.debug = CTkImage(Image.open(os.path.join(os.getcwd(), 'img', 'light', 'debug.png')), Image.open(os.path.join(os.getcwd(), 'img', 'dark', 'debug.png')), size=size)
 
 #######
 # GUI #
@@ -95,28 +98,48 @@ class GUI(CTk):
     def _processesTab(self, tabName:str):
         self.tabview.tab(tabName).rowconfigure((0, 2), weight=1)
         self.tabview.tab(tabName).rowconfigure((1), weight=5)
-        self.tabview.tab(tabName).columnconfigure((0), weight=1)
+        self.tabview.tab(tabName).columnconfigure((0,1), weight=1)
         self.searchbar = CTkEntry(self.tabview.tab(tabName), font=('Arial', 20), height=50) 
+
+        class button_pallette(CTkFrame):
+            def __init__(self, master, listBox:CTkListbox):
+                super().__init__(master, width=0, height=0, corner_radius=20)
+                self.rowconfigure((0), weight=1)
+                self.columnconfigure((0,1,2), weight=1)
+                self.listBox = listBox
+                self.killBtn = CTkButton(self, text='', image=Icons((20, 20)).skull, command=self._killProcess, width=0, height=0, fg_color='gray20', hover_color='gray50')
+                self.restartBtn = CTkButton(self, text='', image=Icons((20, 20)).refresh, command=self._restartProcess, width=0, height=0, fg_color='gray20', hover_color='gray50')
+                self.copyPIDBtn = CTkButton(self, text='', image=Icons((20, 20)).debug, command=self._copyPID, width=0, height=0, fg_color='gray20', hover_color='gray50')
+                self.killBtn.grid(row=0, column=0, sticky=NSEW)
+                self.restartBtn.grid(row=0, column=1, sticky=NSEW)
+                self.copyPIDBtn.grid(row=0, column=2, sticky=NSEW)
+
+            def _killProcess(self):
+                psutil.Process(int(re.findall(r'\((.*?)\)', self.listBox.get())[0])).kill()
+            def _restartProcess(self):
+                ...
+            def _copyPID(self):
+                pyperclip.copy(re.findall(r'\((.*?)\)', self.listBox.get())[0])
+
 
         if self._mode == 'light':
             self.processList = CTkListbox(self.tabview.tab(tabName), listvariable=self.processListVar, text_color='black')
         else:
             self.processList = CTkListbox(self.tabview.tab(tabName), listvariable=self.processListVar)
 
-        self.searchbar.grid(row=0, column=0, sticky='EW', padx=30, pady=10)
+        self.button_pallette = button_pallette(self.tabview.tab(tabName), self.processList)
+
+        self.searchbar.grid(row=0, column=0, sticky='EW', padx=30, pady=10, columnspan=2)
+        self.processList.grid(row=1, column=0, sticky='NSEW', padx=30, pady=10, columnspan=2)
         self.searchbar.bind("<Return>", self.__search_process_list)
-        self.processList.grid(row=1, column=0, sticky='NSEW', padx=30, pady=10)
-        # self.updateProcessesBtn = CTkButton(self.tabview.tab(tabName), text='Refresh', font=('Arial', 16), command=lambda:update())
-        # self.updateProcessesBtn.grid(row=2, column=0, sticky='NS', padx=40)
-        # def update():
-        #    self.autoupdate = True
+        self.button_pallette.grid(row=2, column=1, sticky=NE, padx=40)        
+        
 
     def _performanceTab(self, tabName:str):
         self.tabview.tab(tabName).rowconfigure((0,1,2,3,4,5), weight=1)
         self.tabview.tab(tabName).columnconfigure((0), weight=1)
 
         # CPU
-        # info = cpuinfo.get_cpu_info_from_registry()
         self.cpu_frame = self.__performanceBaseFrame('CPU Usage', self.tabview.tab(tabName))
         self.cpu_frame.grid(row=0, column=0, sticky=NSEW, padx=10, pady=20)
         
@@ -126,11 +149,13 @@ class GUI(CTk):
         
         # DISK
         for index, disk in enumerate(psutil.disk_partitions()):
-            tmpFrame = self.__performanceBaseFrame(f'Disk Usage ( {disk.mountpoint} )', self.tabview.tab(tabName))
-            # self.disk_frame = self.__performanceBaseFrame('Disk Usage', self.tabview.tab(tabName))
-            tmpFrame.grid(row=2+index, column=0, sticky=NSEW, padx=10, pady=20)
-            tmpFrame.bar.set(psutil.disk_usage(disk.mountpoint).percent/100)
-            tmpFrame.text.configure(text=f'{psutil.disk_usage(disk.mountpoint).percent}%')
+            try:
+                tmpFrame = self.__performanceBaseFrame(f'Disk Usage ( {disk.mountpoint} )', self.tabview.tab(tabName))
+                tmpFrame.grid(row=2+index, column=0, sticky=NSEW, padx=10, pady=20)
+                tmpFrame.bar.set(psutil.disk_usage(disk.mountpoint).percent/100)
+                tmpFrame.text.configure(text=f'{psutil.disk_usage(disk.mountpoint).percent}%')
+            except PermissionError:
+                pass
 
     def __performanceBaseFrame(self, title:str, master):
         frame = CTkFrame(master, corner_radius=10)
@@ -141,7 +166,7 @@ class GUI(CTk):
         frame.bar = CTkProgressBar(frame)
         frame.bar.set(0)
         frame.bar.grid(row=1, column=0, sticky=EW, padx=10, pady=(0, 20))
-        frame.text = CTkLabel(frame, text='%%', font=('Arial', 16))
+        frame.text = CTkLabel(frame, text='--', font=('Arial', 16))
         frame.text.grid(row=0, column=1, rowspan=2)
         return frame
     
@@ -157,18 +182,17 @@ class GUI(CTk):
     def __update_process_list(self):
         while self.autoupdate == True and self.tabview.get() == 'Processes':
             background_label, background_image = self.__loadingProcessesSplash() 
-            self.processListVar.set([process.name() for process in psutil.process_iter()])
+            self.processListVar.set([f'{process.name()} ({process.pid})' for process in psutil.process_iter()])
             self.autoupdate = False
-            # Verschwommenes Bild und Label entfernen
+            # Verschwommenes Bild und Label entfernen ENGLISJHHH ÑÑÑÑÑÑÑÑÑÑÑ
             background_label.destroy()
             background_image.__del__()
             self.update()
-            os.remove('cache/temp_screenshot.png')
-            os.remove('cache/blurred_screenshot.png')
-        
-    def __search_process_list(self, event):
+            
+            
+    def __search_process_list(self, *args):
         matchstr = self.searchbar.get()
-        process_names = [element.name() for element in psutil.process_iter() if matchstr in element.name()]
+        process_names = [f'{element.name()} ({element.pid})' for element in psutil.process_iter() if matchstr in element.name()]
         if not process_names:
             CTkMessagebox(title="Error", message="No matching results could be found!", icon="cancel")
             return
@@ -184,13 +208,21 @@ class GUI(CTk):
                 update_thread.daemon = True
                 update_thread.start() 
                 update_thread.join()
-            time.sleep(0.25)
+               
             if currentTab == 'Processes':
                 if self.autoupdate == True:    
                     update_thread = threading.Thread(target=self.__update_process_list)
                     update_thread.daemon = True
                     update_thread.start() 
                     update_thread.join()
+                    if self.processList.get() == None:
+                        self.button_pallette.killBtn.configure(state='disabled')
+                        self.button_pallette.copyPIDBtn.configure(state='disabled')
+                        self.button_pallette.restartBtn.configure(state='disabled')
+                elif self.button_pallette.killBtn._state == 'disabled':
+                    self.button_pallette.killBtn.configure(state='normal')
+                    self.button_pallette.copyPIDBtn.configure(state='normal')
+                    self.button_pallette.restartBtn.configure(state='normal')
             time.sleep(0.25)
 
     def __loadingProcessesSplash(self):
@@ -200,19 +232,15 @@ class GUI(CTk):
         y = self.winfo_rooty()
         x1 = x + self.winfo_width()
         y1 = y + self.winfo_height()
-        ImageGrab.grab().crop((x, y, x1, y1)).save("cache/temp_screenshot.png")
-
-        # blur image
-        img = Image.open("cache/temp_screenshot.png")
-        img = img.filter(ImageFilter.GaussianBlur(radius=10))
-        img.save("cache/blurred_screenshot.png")
-
-        # set as backround
-        background_image = ImageTk.PhotoImage(file="cache/blurred_screenshot.png")
-        background_label = CTkLabel(self, text='Loading...', image=background_image)
-        background_label.place(x=0, y=0, relwidth=1, relheight=1)
-
+        
+        background_image = ImageTk.PhotoImage(ImageGrab.grab().crop((x, y, x1, y1)).filter(ImageFilter.GaussianBlur(radius=10)))
+        background_label = CTkLabel(self, text='Loading process list...', image=background_image)
+        background_label.place(x=0, y=1, relwidth=1, relheight=1)
+        
         # load blured picture
         self.update()
 
         return background_label, background_image
+
+    def __killProcessBtn(self):
+        print(self.processList.get())
