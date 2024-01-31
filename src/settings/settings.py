@@ -3,6 +3,7 @@
 # Licensed under GPL 3.0
 
 from customtkinter import *
+import tkinter as tk
 import customtkinter
 import json
 import platform
@@ -38,4 +39,6 @@ class SettingsWindow(CTkToplevel):
         elif operating_system == 'Linux':
             pass
         else:
-            self.after(200, lambda: self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico')))
+            # setup macos window icon
+            img = tk.Image("photo", file="content/logo_crosstask-removebg.png")
+            self.after(200, lambda: self.tk.call('wm','iconphoto', self._w, img))

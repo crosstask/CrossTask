@@ -4,6 +4,7 @@
 
 import customtkinter
 from customtkinter import CTkToplevel
+import tkinter as tk
 from PIL import Image
 import json
 import platform
@@ -39,4 +40,6 @@ class AboutPopup(CTkToplevel):
         elif operating_system == 'Linux':
             pass
         else:
-            self.after(200, lambda: self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico')))
+            # setup macos window icon
+            img = tk.Image("photo", file="content/logo_crosstask-removebg.png")
+            self.after(200, lambda: self.tk.call('wm','iconphoto', self._w, img))

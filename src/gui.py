@@ -7,10 +7,11 @@
 # MODULES #
 ###########
 from customtkinter import *
-from tkinter import Menu
+from tkinter import Menu, Label
+import tkinter as tk
 from CTkListbox import CTkListbox
 from src.popups.about_developer import DevelopersPopup
-from PIL import Image, ImageTk, ImageFilter, ImageGrab
+from PIL import Image
 from src.popups.about_program import AboutPopup
 from src.settings.settings import SettingsWindow
 from CTkMessagebox import CTkMessagebox
@@ -51,7 +52,9 @@ class GUI(CTk):
         elif operating_system == 'Linux':
             pass
         else:
-            self.iconbitmap(os.path.join(os.getcwd(), 'img', 'bitmap.ico'))
+            # setup macos window icon
+            img = tk.Image("photo", file="content/logo_crosstask-removebg.png")
+            self.tk.call('wm','iconphoto', self._w, img)
 
         self.rowconfigure((0), weight=1)
         self.columnconfigure((0), weight=1)
@@ -181,20 +184,19 @@ class GUI(CTk):
 
     def __update_process_list(self):
         while self.autoupdate == True and self.tabview.get() == 'Processes':
-            background_label, background_image = self.__loadingProcessesSplash() 
+            background_image, image_label, loading_label = self.__loadingProcessesSplash() 
             self.processListVar.set([f'{process.name()} ({process.pid})' for process in psutil.process_iter()])
             self.autoupdate = False
-            # Verschwommenes Bild und Label entfernen ENGLISJHHH ÑÑÑÑÑÑÑÑÑÑÑ
-            background_label.destroy()
+            image_label.destroy()
+            loading_label.destroy()
             background_image.__del__()
             self.update()
             
-            
     def __search_process_list(self, *args):
         matchstr = self.searchbar.get()
-        process_names = [f'{element.name()} ({element.pid})' for element in psutil.process_iter() if matchstr in element.name()]
+        process_names = [f'{element.name()} ({element.pid})' for element in psutil.process_iter() if matchstr.lower() in element.name().lower()]
         if not process_names:
-            CTkMessagebox(title="Error", message="No matching results could be found!", icon="cancel")
+            self.processListVar.set(["No matching result found!"])
             return
         self.processListVar.set(process_names)
 
@@ -226,21 +228,19 @@ class GUI(CTk):
             time.sleep(0.25)
 
     def __loadingProcessesSplash(self):
-        # capture window
         self.update()
         x = self.winfo_rootx()
         y = self.winfo_rooty()
-        x1 = x + self.winfo_width()
-        y1 = y + self.winfo_height()
         
-        background_image = ImageTk.PhotoImage(ImageGrab.grab().crop((x, y, x1, y1)).filter(ImageFilter.GaussianBlur(radius=10)))
-        background_label = CTkLabel(self, text='Loading process list...', image=background_image)
-        background_label.place(x=0, y=1, relwidth=1, relheight=1)
-        
-        # load blured picture
+        background_image = PhotoImage(file="content/logo_crosstask-removebg.png")  # Use PhotoImage with file parameter
+        image_label = Label(self, image=background_image, text='')
+        image_label.place(x=0, y=1, relwidth=1, relheight=1)
+        loading_label = Label(self, text="Loading...", font=("Arial", 15))
+        loading_label.place(relx=0.1, rely=0.96, anchor="center")        
+        # load blurred picture
         self.update()
 
-        return background_label, background_image
+        return background_image, image_label, loading_label
 
     def __killProcessBtn(self):
         print(self.processList.get())
