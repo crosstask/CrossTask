@@ -52,7 +52,7 @@ class GUI(CTk):
         elif operating_system == 'Linux':
             pass
         else:
-            # setup macos window icon
+            # setup macos window icon 
             img = tk.Image("photo", file="content/logo_crosstask-removebg.png")
             self.tk.call('wm','iconphoto', self._w, img)
 
@@ -139,21 +139,23 @@ class GUI(CTk):
         
 
     def _performanceTab(self, tabName:str):
-        self.tabview.tab(tabName).rowconfigure((0,1,2,3,4,5), weight=1)
-        self.tabview.tab(tabName).columnconfigure((0), weight=1)
+        frame = CTkScrollableFrame(self.tabview.tab(tabName))
+        frame.grid(row=0, column=0, sticky=NSEW, padx=5, pady=5)
+        self.tabview.tab(tabName).rowconfigure(0, weight=1)  # Configure row weight
+        self.tabview.tab(tabName).columnconfigure(0, weight=1)  # Configure column weight
 
         # CPU
-        self.cpu_frame = self.__performanceBaseFrame('CPU Usage', self.tabview.tab(tabName))
+        self.cpu_frame = self.__performanceBaseFrame('CPU Usage', frame)
         self.cpu_frame.grid(row=0, column=0, sticky=NSEW, padx=10, pady=20)
         
         # RAM
-        self.ram_frame = self.__performanceBaseFrame('Memory Usage', self.tabview.tab(tabName))
+        self.ram_frame = self.__performanceBaseFrame('Memory Usage', frame)
         self.ram_frame.grid(row=1, column=0, sticky=NSEW, padx=10, pady=20)
         
         # DISK
         for index, disk in enumerate(psutil.disk_partitions()):
             try:
-                tmpFrame = self.__performanceBaseFrame(f'Disk Usage ( {disk.mountpoint} )', self.tabview.tab(tabName))
+                tmpFrame = self.__performanceBaseFrame(f'Disk Usage ( {disk.mountpoint} )', frame)
                 tmpFrame.grid(row=2+index, column=0, sticky=NSEW, padx=10, pady=20)
                 tmpFrame.bar.set(psutil.disk_usage(disk.mountpoint).percent/100)
                 tmpFrame.text.configure(text=f'{psutil.disk_usage(disk.mountpoint).percent}%')
