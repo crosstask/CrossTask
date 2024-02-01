@@ -3,7 +3,5 @@ customtkinter==5.2.1
 psutil==5.9.7
 packaging==23.2
 pillow==10.2.0 
-CTkMessagebox==2.5
 CTkToolTip==0.8
-pyperclip>=1.8.2
 pillow

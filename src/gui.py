@@ -14,7 +14,7 @@ from src.popups.about_developer import DevelopersPopup
 from PIL import Image
 from src.popups.about_program import AboutPopup
 from src.settings.settings import SettingsWindow
-from CTkMessagebox import CTkMessagebox
+from src.popups.process_info import ProcessInfo
 from tkinter import PhotoImage
 import psutil
 import os
@@ -23,7 +23,7 @@ import time
 import platform
 from PIL import Image
 import re
-import pyperclip
+
 
 #########
 # Icons # https://lucide.dev <3
@@ -122,7 +122,7 @@ class GUI(CTk):
             def _restartProcess(self):
                 ...
             def _copyPID(self):
-                pyperclip.copy(re.findall(r'\((.*?)\)', self.listBox.get())[0])
+                ProcessInfo(self.listBox.get(), re.findall(r'\((.*?)\)', self.listBox.get())[0])
 
 
         if self._mode == 'light':
