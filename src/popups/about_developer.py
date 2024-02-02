@@ -8,6 +8,8 @@ import tkinter as tk
 import os
 import webbrowser
 import platform
+import customtkinter
+import json
 
 
 class Icons():
@@ -22,6 +24,19 @@ class DevelopersPopup(CTkToplevel):
         self.geometry('400x190')
         self.resizable(False, False)
         self.title('Developers')
+
+        # read settings
+        with open('config/settings.json', 'r') as f:
+            data = json.load(f)
+            theme = data['theme']
+        f.close()
+        
+        if theme == "System":
+            customtkinter.set_appearance_mode("system")
+        elif theme == "Dark":
+            customtkinter.set_appearance_mode("dark")
+        elif theme == "White":
+            customtkinter.set_appearance_mode("white")
 
         CTkLabel(self, text='This project has been developed by:', font=('Arial', 16, 'bold')).pack(pady=10)
         self._developerFrame('DarkGloves', 'https://github.com/DarkGloves').pack(pady=15)

@@ -7,6 +7,7 @@
 # MODULES #
 ###########
 from customtkinter import *
+import customtkinter
 from tkinter import Menu, Label
 import tkinter as tk
 from CTkListbox import CTkListbox
@@ -23,6 +24,7 @@ import time
 import platform
 from PIL import Image
 import re
+import json
 
 
 #########
@@ -56,6 +58,19 @@ class GUI(CTk):
             img = tk.Image("photo", file="content/logo_crosstask-removebg.png")
             self.tk.call('wm','iconphoto', self._w, img)
 
+        # read settings
+        with open('config/settings.json', 'r') as f:
+            data = json.load(f)
+            theme = data['theme']
+        f.close()
+        
+        if theme == "System":
+            customtkinter.set_appearance_mode("system")
+        elif theme == "Dark":
+            customtkinter.set_appearance_mode("dark")
+        elif theme == "White":
+            customtkinter.set_appearance_mode("white")
+        
         self.rowconfigure((0), weight=1)
         self.columnconfigure((0), weight=1)
         

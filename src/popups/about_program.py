@@ -18,6 +18,19 @@ class AboutPopup(CTkToplevel):
         self.resizable(False, False)
         self.title('About')
 
+        # read settings
+        with open('config/settings.json', 'r') as f:
+            data = json.load(f)
+            theme = data['theme']
+        f.close()
+        
+        if theme == "System":
+            customtkinter.set_appearance_mode("system")
+        elif theme == "Dark":
+            customtkinter.set_appearance_mode("dark")
+        elif theme == "White":
+            customtkinter.set_appearance_mode("white")
+
         self.img = customtkinter.CTkImage(light_image=Image.open('content/logo_crosstask-removebg.png'), dark_image=Image.open('content/logo_crosstask-removebg.png'), size=(200, 200))
         self.label = customtkinter.CTkLabel(self, image=self.img, text='')
         self.label.grid(column=0, row=0)

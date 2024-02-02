@@ -7,6 +7,8 @@ import tkinter as tk
 import platform
 import os
 import psutil
+import customtkinter
+import json
 
 
 class ProcessInfo(CTkToplevel):
@@ -15,6 +17,19 @@ class ProcessInfo(CTkToplevel):
         self.geometry('350x230')
         self.resizable(False, False)
         self.title(f'Process [{process_id}]')
+
+        # read settings
+        with open('config/settings.json', 'r') as f:
+            data = json.load(f)
+            theme = data['theme']
+        f.close()
+        
+        if theme == "System":
+            customtkinter.set_appearance_mode("system")
+        elif theme == "Dark":
+            customtkinter.set_appearance_mode("dark")
+        elif theme == "White":
+            customtkinter.set_appearance_mode("white")
 
         # Process Label
         name_label = CTkLabel(self, text=f'Process:     {process_name}')
