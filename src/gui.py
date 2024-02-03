@@ -156,7 +156,6 @@ class GUI(CTk):
     def _performanceTab(self, tabName:str):
         frame = CTkScrollableFrame(self.tabview.tab(tabName))
         frame.grid(row=0, column=0, sticky=NSEW, padx=5, pady=5)
-        frame.columnconfigure((0), weight=1)
         self.tabview.tab(tabName).rowconfigure(0, weight=1)  # Configure row weight
         self.tabview.tab(tabName).columnconfigure(0, weight=1)  # Configure column weight
 
@@ -203,7 +202,11 @@ class GUI(CTk):
     def __update_process_list(self):
         while self.autoupdate == True and self.tabview.get() == 'Processes':
             background_image, image_label, loading_label = self.__loadingProcessesSplash() 
-            self.processListVar.set([f'{process.name()} ({process.pid})' for process in psutil.process_iter()])
+            proc_list = []
+            for process in psutil.process_iter():
+                proc_list.append(f'{process.name()} ({process.pid})')
+            print(f'[log] loaded processes: {len(proc_list)}')
+            self.processListVar.set(proc_list)
             self.autoupdate = False
             image_label.destroy()
             loading_label.destroy()
