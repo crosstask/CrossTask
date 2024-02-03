@@ -103,6 +103,7 @@ class GUI(CTk):
         # vars
         self._mode = self._get_appearance_mode()
         self.autoupdate = True
+        self.countProcesses = 0
         self.processListVar = StringVar(value=['Process list'])
         self._processesTab('Processes')
         self._performanceTab('Performance')
@@ -201,11 +202,17 @@ class GUI(CTk):
 
     def __update_process_list(self):
         while self.autoupdate == True and self.tabview.get() == 'Processes':
-            background_image, image_label, loading_label = self.__loadingProcessesSplash() 
+            # count processes
             proc_list = []
             for process in psutil.process_iter():
                 proc_list.append(f'{process.name()} ({process.pid})')
-            print(f'[log] loaded processes: {len(proc_list)}')
+            
+            proc_list_length = len(proc_list)
+            print(f'[log] Processes: {proc_list_length}')
+            self.countProcesses += proc_list_length
+
+            background_image, image_label, loading_label = self.__loadingProcessesSplash() 
+            
             self.processListVar.set(proc_list)
             self.autoupdate = False
             image_label.destroy()
@@ -253,11 +260,11 @@ class GUI(CTk):
         x = self.winfo_rootx()
         y = self.winfo_rooty()
         
-        background_image = PhotoImage(file="content/logo_crosstask-removebg.png")  # Use PhotoImage with file parameter
+        background_image = PhotoImage(file="content/logo_crosstask-removebg.png")
         image_label = Label(self, image=background_image, text='')
         image_label.place(x=0, y=1, relwidth=1, relheight=1)
-        loading_label = Label(self, text="Loading...", font=("Arial", 15))
-        loading_label.place(relx=0.1, rely=0.96, anchor="center")        
+        loading_label = Label(self, text=f"Loading {self.countProcesses} processes...", font=("Arial", 15))
+        loading_label.place(relx=0.205, rely=0.96, anchor="center")        
         # load blurred picture
         self.update()
 
