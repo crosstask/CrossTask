@@ -38,7 +38,7 @@ class ProcessInfo(CTkToplevel):
         # cpu usage of process
         cpu_frame = CTkFrame(self)
         cpu_frame.pack()
-        cpu_usage_label = CTkLabel(cpu_frame, text='CPU usage:')
+        cpu_usage_label = CTkLabel(cpu_frame, text='CPU usage')
         cpu_usage_label.pack()
         cpu_usage = CTkProgressBar(cpu_frame)
         cpu_usage.pack(padx=10, pady=5)
@@ -46,7 +46,7 @@ class ProcessInfo(CTkToplevel):
         # ram usage of process
         ram_frame = CTkFrame(self)
         ram_frame.pack(pady=18)
-        ram_usage_label = CTkLabel(ram_frame, text='RAM usage:')
+        ram_usage_label = CTkLabel(ram_frame, text='RAM usage')
         ram_usage_label.pack()
         ram_usage = CTkProgressBar(ram_frame)
         ram_usage.pack(padx=10, pady=5)
@@ -63,12 +63,17 @@ class ProcessInfo(CTkToplevel):
             self.after(200, lambda: self.tk.call('wm','iconphoto', self._w, img))
 
         # start stat reloading
-        self.after(200, lambda: self._update_stats(process_id, cpu_usage, ram_usage))
+        self.after(200, lambda: self._update_stats(process_id, cpu_usage, ram_usage, cpu_usage_label, ram_usage_label))
 
-    def _update_stats(self, process_id, cpu_usage, ram_usage):
+    def _update_stats(self, process_id, cpu_usage, ram_usage, cpu_usage_label, ram_usage_label):
         p = psutil.Process(int(process_id))
         process_mem = p.memory_percent()
         process_cpu = p.cpu_percent(interval=1)
 
+        # cpu updater
+        cpu_usage_label.configure(text=f'{round(process_cpu, 1)}% CPU usage')
         cpu_usage.set(process_cpu/100)
+
+        # ram updater
+        ram_usage_label.configure(text=f'{round(process_mem, 1)}% RAM usage')
         ram_usage.set(process_mem/100)

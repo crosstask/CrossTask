@@ -74,7 +74,6 @@ class GUI(CTk):
         self.rowconfigure((0), weight=1)
         self.columnconfigure((0), weight=1)
         
-
         # tabview
         self.tabview = CTkTabview(self)
         self.tabview.grid(row=0, column=0, sticky=NSEW, padx=10, pady=10)
@@ -121,32 +120,46 @@ class GUI(CTk):
         self.searchbar = CTkEntry(self.tabview.tab(tabName), font=('Arial', 20), height=50) 
 
         class button_pallette(CTkFrame):
-            def __init__(self, master, listBox:CTkListbox):
+            def __init__(self, master, listBox:CTkListbox, processListVar, title):
                 super().__init__(master, width=0, height=0, corner_radius=20)
                 self.rowconfigure((0), weight=1)
                 self.columnconfigure((0,1,2), weight=1)
                 self.listBox = listBox
                 self.killBtn = CTkButton(self, text='', image=Icons((20, 20)).skull, command=self._killProcess, width=0, height=0, fg_color='gray20', hover_color='gray50')
-                self.restartBtn = CTkButton(self, text='', image=Icons((20, 20)).refresh, command=self._restartProcess, width=0, height=0, fg_color='gray20', hover_color='gray50')
+                self.restartBtn = CTkButton(self, text='', image=Icons((20, 20)).refresh, command=lambda: self._restartProcess(processListVar, title), width=0, height=0, fg_color='gray20', hover_color='gray50')
                 self.copyPIDBtn = CTkButton(self, text='', image=Icons((20, 20)).debug, command=self._copyPID, width=0, height=0, fg_color='gray20', hover_color='gray50')
                 self.killBtn.grid(row=0, column=0, sticky=NSEW)
                 self.restartBtn.grid(row=0, column=1, sticky=NSEW)
                 self.copyPIDBtn.grid(row=0, column=2, sticky=NSEW)
-
+                
             def _killProcess(self):
                 psutil.Process(int(re.findall(r'\((.*?)\)', self.listBox.get())[0])).kill()
-            def _restartProcess(self):
-                ...
+
+            # Coming feature: search if item is already inserted -> just add/remove new/old
+            def _restartProcess(self, processListVar, title):
+                title('CrossTask - refreshing...')
+                proc_list = []
+                for process in psutil.process_iter(['pid', 'name', 'username']):
+                    if process.username() != 'root':  # Exclude kernel processes by checking the username
+                        item = proc_list.append(f'{process.info["name"]} ({process.info["pid"]})')
+
+                # collect informations about processes
+                proc_list_length = len(proc_list)
+                print(f'[log] Processes: {proc_list_length}')
+                self.countProcesses = proc_list_length
+
+                processListVar.set(proc_list)
+                title('CrossTask')
+
             def _copyPID(self):
                 ProcessInfo(self.listBox.get(), re.findall(r'\((.*?)\)', self.listBox.get())[0])
-
 
         if self._mode == 'light':
             self.processList = CTkListbox(self.tabview.tab(tabName), listvariable=self.processListVar, text_color='black')
         else:
             self.processList = CTkListbox(self.tabview.tab(tabName), listvariable=self.processListVar)
 
-        self.button_pallette = button_pallette(self.tabview.tab(tabName), self.processList)
+        self.button_pallette = button_pallette(self.tabview.tab(tabName), self.processList, self.processListVar, self.title)
 
         self.searchbar.grid(row=0, column=0, sticky='EW', padx=30, pady=10, columnspan=2)
         self.processList.grid(row=1, column=0, sticky='NSEW', padx=30, pady=10, columnspan=2)
@@ -202,18 +215,21 @@ class GUI(CTk):
 
     def __update_process_list(self):
         while self.autoupdate == True and self.tabview.get() == 'Processes':
-            # count processes
             proc_list = []
-            for process in psutil.process_iter():
-                proc_list.append(f'{process.name()} ({process.pid})')
-            
+            for process in psutil.process_iter(['pid', 'name', 'username']):
+                if process.username() != 'root':  # Exclude kernel processes by checking the username
+                    proc_list.append(f'{process.info["name"]} ({process.info["pid"]})')
+                        
             proc_list_length = len(proc_list)
             print(f'[log] Processes: {proc_list_length}')
-            self.countProcesses += proc_list_length
+            self.countProcesses = proc_list_length
 
-            background_image, image_label, loading_label = self.__loadingProcessesSplash() 
+            background_image, image_label, loading_label = self.__loadingProcessesSplash() # activate loading splash
             
+            # update gui process list
             self.processListVar.set(proc_list)
+
+            # set update to false and destroy loading splash, update gui
             self.autoupdate = False
             image_label.destroy()
             loading_label.destroy()
@@ -222,10 +238,19 @@ class GUI(CTk):
             
     def __search_process_list(self, *args):
         matchstr = self.searchbar.get()
-        process_names = [f'{element.name()} ({element.pid})' for element in psutil.process_iter() if matchstr.lower() in element.name().lower()]
+        proc_list_search = []
+        process_names = []
+        for process in psutil.process_iter(['pid', 'name', 'username']):
+            if process.username() != 'root':  # Exclude kernel processes by checking the username
+                proc_list_search.append(f'{process.info["name"]} ({process.info["pid"]})')
+                if matchstr.lower() in process.name().lower(): # If lowercase search matches with lowercase result
+                    process_names.append(f'{process.name()} ({process.pid})')
+
+        # If no process with this search was found, insert "No matching result found"
         if not process_names:
             self.processListVar.set(["No matching result found!"])
             return
+        
         self.processListVar.set(process_names)
 
     def __current_tab_action(self):
