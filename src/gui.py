@@ -140,8 +140,7 @@ class GUI(CTk):
                 title('CrossTask - refreshing...')
                 proc_list = []
                 for process in psutil.process_iter(['pid', 'name', 'username']):
-                    if process.username() != 'root':  # Exclude kernel processes by checking the username
-                        item = proc_list.append(f'{process.info["name"]} ({process.info["pid"]})')
+                    item = proc_list.append(f'{process.info["name"]} ({process.info["pid"]})')
 
                 # collect informations about processes
                 proc_list_length = len(proc_list)
@@ -217,8 +216,7 @@ class GUI(CTk):
         while self.autoupdate == True and self.tabview.get() == 'Processes':
             proc_list = []
             for process in psutil.process_iter(['pid', 'name', 'username']):
-                if process.username() != 'root':  # Exclude kernel processes by checking the username
-                    proc_list.append(f'{process.info["name"]} ({process.info["pid"]})')
+                proc_list.append(f'{process.info["name"]} ({process.info["pid"]})')
                         
             proc_list_length = len(proc_list)
             print(f'[log] Processes: {proc_list_length}')
@@ -241,10 +239,9 @@ class GUI(CTk):
         proc_list_search = []
         process_names = []
         for process in psutil.process_iter(['pid', 'name', 'username']):
-            if process.username() != 'root':  # Exclude kernel processes by checking the username
-                proc_list_search.append(f'{process.info["name"]} ({process.info["pid"]})')
-                if matchstr.lower() in process.name().lower(): # If lowercase search matches with lowercase result
-                    process_names.append(f'{process.name()} ({process.pid})')
+            proc_list_search.append(f'{process.info["name"]} ({process.info["pid"]})')
+            if matchstr.lower() in process.name().lower(): # If lowercase search matches with lowercase result
+                process_names.append(f'{process.name()} ({process.pid})')
 
         # If no process with this search was found, insert "No matching result found"
         if not process_names:
