@@ -168,6 +168,7 @@ class GUI(CTk):
 
     def _performanceTab(self, tabName:str):
         frame = CTkScrollableFrame(self.tabview.tab(tabName))
+        frame.columnconfigure((0), weight=1)
         frame.grid(row=0, column=0, sticky=NSEW, padx=5, pady=5)
         self.tabview.tab(tabName).rowconfigure(0, weight=1)  # Configure row weight
         self.tabview.tab(tabName).columnconfigure(0, weight=1)  # Configure column weight
