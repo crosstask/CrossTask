@@ -10,6 +10,7 @@ from customtkinter import *
 import customtkinter
 from tkinter import Menu, Label
 import tkinter as tk
+from src.widgets import *
 from CTkListbox import CTkListbox
 from src.popups.about_developer import DevelopersPopup
 from PIL import Image
@@ -133,7 +134,7 @@ class GUI(CTk):
                 self.copyPIDBtn.grid(row=0, column=2, sticky=NSEW)
                 
             def _killProcess(self):
-                psutil.Process(int(re.findall(r'\((.*?)\)', self.listBox.get())[0])).kill()
+                psutil.Process(int(re.findall(r'\((.*?)\)', self.listBox.List.get(self.listBox.List.curselection()))[0])).kill()
 
             # Coming feature: search if item is already inserted -> just add/remove new/old
             def _restartProcess(self, processListVar, title):
@@ -151,12 +152,9 @@ class GUI(CTk):
                 title('CrossTask')
 
             def _copyPID(self):
-                ProcessInfo(self.listBox.get(), re.findall(r'\((.*?)\)', self.listBox.get())[0])
+                ProcessInfo(self.listBox.List.get(self.listBox.List.curselection())(), re.findall(r'\((.*?)\)', self.listBox.List.get(self.listBox.List.curselection())())[0])
 
-        if self._mode == 'light':
-            self.processList = CTkListbox(self.tabview.tab(tabName), listvariable=self.processListVar, text_color='black')
-        else:
-            self.processList = CTkListbox(self.tabview.tab(tabName), listvariable=self.processListVar)
+        self.processList = ScrollableListbox(self.tabview.tab(tabName), self._get_appearance_mode(), self.processListVar)
 
         self.button_pallette = button_pallette(self.tabview.tab(tabName), self.processList, self.processListVar, self.title)
 
@@ -268,7 +266,7 @@ class GUI(CTk):
                     update_thread.daemon = True
                     update_thread.start() 
                     update_thread.join()
-                    if self.processList.get() == None:
+                    if self.processList.List.get(0) == None:
                         self.button_pallette.killBtn.configure(state='disabled')
                         self.button_pallette.copyPIDBtn.configure(state='disabled')
                         self.button_pallette.restartBtn.configure(state='disabled')
@@ -294,4 +292,4 @@ class GUI(CTk):
         return background_image, image_label, loading_label
 
     def __killProcessBtn(self):
-        print(self.processList.get())
+        print(self.processList.List.get(self.processList.List.curselection()))
