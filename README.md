@@ -46,10 +46,7 @@ CrossTask is an OpenSource, cross-platform task manager written in Python. It ut
 - [psutil](https://github.com/giampaolo/psutil): Provides an interface for retrieving system information, such as CPU, memory, disk usage, and network statistics.
 - [packaging](https://pypi.org/project/packaging/): Provides functionality for working with Python packages, including parsing version numbers, comparing versions, and manipulating package metadata.
 - [pillow](https://python-pillow.org/): A fork of the Python Imaging Library (PIL), it provides image processing capabilities, including opening, manipulating, and saving various image file formats.
-- [CTkListbox](https://github.com/marcosvital/CTkListbox): A custom listbox widget for tkinter that provides additional features and customization options.
 - [customtkinter](https://github.com/ParthJadhav/customtkinter): A custom version of the tkinter library that adds additional functionalities and styling options to the standard tkinter package.
-- [CTkMessagebox](https://github.com/marcosvital/CTkMessagebox): A custom messagebox widget for tkinter that provides additional features and customization options.
-- [CTkToolTip](https://github.com/marcosvital/CTkToolTip): A custom tooltip widget for tkinter that allows displaying additional information when hovering over certain elements.
 ## 🚀 Run Locally
 
 1.Clone the CrossTask repository:
