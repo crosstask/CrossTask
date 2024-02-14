@@ -13,7 +13,7 @@ import os
 class SettingsWindow(CTkToplevel):
     def __init__(self):
         super().__init__()
-        self.geometry('350x250')
+        self.geometry('200x150')
         self.resizable(False, False)
         self.title('Settings')
 
