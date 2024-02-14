@@ -47,7 +47,7 @@ class SettingsWindow(CTkToplevel):
     def _settings(self):
         # read settings
         doc_path = os.path.join(os.path.expanduser('~'), 'Documents')
-        with open(f'{doc_path}/Settings/settings.json', 'r') as f:
+        with open(f'{doc_path}/CrossTask/Settings/settings.json', 'r') as f:
             data = json.load(f)
             theme = data['theme']
         f.close()
