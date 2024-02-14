@@ -11,7 +11,6 @@ import customtkinter
 from tkinter import Menu, Label
 import tkinter as tk
 from src.widgets import *
-from CTkListbox import CTkListbox
 from src.popups.about_developer import DevelopersPopup
 from PIL import Image
 from src.popups.about_program import AboutPopup
@@ -103,6 +102,7 @@ class GUI(CTk):
         # vars
         self._mode = self._get_appearance_mode()
         self.autoupdate = True
+        self.startup = True
         self.countProcesses = 0
         self.processListVar = StringVar(value=['Process list'])
         self._processesTab('Processes')
@@ -121,7 +121,7 @@ class GUI(CTk):
         self.searchbar = CTkEntry(self.tabview.tab(tabName), font=('Arial', 20), height=50) 
 
         class button_pallette(CTkFrame):
-            def __init__(self, master, listBox:CTkListbox, processListVar, title):
+            def __init__(self, master, listBox:ScrollableListbox, processListVar, title):
                 super().__init__(master, width=0, height=0, corner_radius=20)
                 self.rowconfigure((0), weight=1)
                 self.columnconfigure((0,1,2), weight=1)
@@ -136,7 +136,6 @@ class GUI(CTk):
             def _killProcess(self):
                 psutil.Process(int(re.findall(r'\((.*?)\)', self.listBox.List.get(self.listBox.List.curselection()))[0])).kill()
 
-            # Coming feature: search if item is already inserted -> just add/remove new/old
             def _restartProcess(self, processListVar, title):
                 title('CrossTask - refreshing...')
                 proc_list = []
@@ -152,7 +151,10 @@ class GUI(CTk):
                 title('CrossTask')
 
             def _copyPID(self):
-                ProcessInfo(self.listBox.List.get(self.listBox.List.curselection())(), re.findall(r'\((.*?)\)', self.listBox.List.get(self.listBox.List.curselection())())[0])
+                selected_index = self.listBox.List.curselection()
+                if selected_index:
+                    selected_item = self.listBox.List.get(selected_index)
+                ProcessInfo(selected_item, re.findall(r'\((.*?)\)', selected_item)[0])
 
         self.processList = ScrollableListbox(self.tabview.tab(tabName), self._get_appearance_mode(), self.processListVar)
 
@@ -221,16 +223,21 @@ class GUI(CTk):
             print(f'[log] Processes: {proc_list_length}')
             self.countProcesses = proc_list_length
 
-            background_image, image_label, loading_label = self.__loadingProcessesSplash() # activate loading splash
+            if self.startup == True:
+                background_image, image_label, loading_label = self.__loadingProcessesSplash() # activate loading splash
             
             # update gui process list
             self.processListVar.set(proc_list)
 
+            if self.startup == True:
+                image_label.destroy()
+                loading_label.destroy()
+                background_image.__del__()
+
             # set update to false and destroy loading splash, update gui
             self.autoupdate = False
-            image_label.destroy()
-            loading_label.destroy()
-            background_image.__del__()
+            self.startup = False
+
             self.update()
             
     def __search_process_list(self, *args):

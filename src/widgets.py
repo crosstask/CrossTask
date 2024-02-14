@@ -1,5 +1,11 @@
+# CrossTask Team
+# Developers: @zlElo and @DarkGloves
+# Licensed under GPL 3.0
+
 from customtkinter import *
 from tkinter import *
+
+
 class ScrollableListbox(CTkFrame):
     def __init__(self, master, appearance_mode:str='dark', listvariable=None):
         super().__init__(master, corner_radius=199)
@@ -11,6 +17,7 @@ class ScrollableListbox(CTkFrame):
         self.columnconfigure((0), weight=1)
         self.List.grid(row=0, column=0, sticky='NSEW')
         self.scrollbar.grid(row=0, column=0, sticky='NSE', padx=2)
+
     def _Dark(self):
         set_appearance_mode('dark')
         self.List.configure(background='gray20', fg_color = 'FFFFFF', )
@@ -18,7 +25,6 @@ class ScrollableListbox(CTkFrame):
     def _Light(self):
         set_appearance_mode('light')
         self.List.configure(background='FFFFFF', fg_color = '000000', )
-
 
 
 # # Testing:
