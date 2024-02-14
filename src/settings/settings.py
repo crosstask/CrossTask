@@ -18,7 +18,8 @@ class SettingsWindow(CTkToplevel):
         self.title('Settings')
 
         # read settings
-        with open('config/settings.json', 'r') as f:
+        doc_path = os.path.join(os.path.expanduser('~'), 'Documents')
+        with open(f'{doc_path}/CrossTask/Settings/settings.json', 'r') as f:
             data = json.load(f)
             theme = data['theme']
         f.close()
@@ -45,7 +46,8 @@ class SettingsWindow(CTkToplevel):
 
     def _settings(self):
         # read settings
-        with open('config/settings.json', 'r') as f:
+        doc_path = os.path.join(os.path.expanduser('~'), 'Documents')
+        with open(f'{doc_path}/Settings/settings.json', 'r') as f:
             data = json.load(f)
             theme = data['theme']
         f.close()
@@ -64,11 +66,13 @@ class SettingsWindow(CTkToplevel):
         self.button_save_theme.pack(pady=7)
 
     def __save_settings_theme(self, box):
-        with open("config/settings.json", 'r') as file:
+        # read settings
+        doc_path = os.path.join(os.path.expanduser('~'), 'Documents')
+        with open(f'{doc_path}/CrossTask/Settings/settings.json', 'r') as file:
             data = json.load(file)
             data['theme'] = box.get()
 
-        with open("config/settings.json", 'w') as file:
+        with open(f'{doc_path}/CrossTask/Settings/settings.json', 'w') as file:
             json.dump(data, file, indent=4)
         
         theme_id = data['theme']

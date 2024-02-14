@@ -59,7 +59,8 @@ class GUI(CTk):
             self.tk.call('wm','iconphoto', self._w, img)
 
         # read settings
-        with open('config/settings.json', 'r') as f:
+        doc_path = os.path.join(os.path.expanduser('~'), 'Documents')
+        with open(f'{doc_path}/CrossTask/Settings/settings.json', 'r') as f:
             data = json.load(f)
             theme = data['theme']
         f.close()
