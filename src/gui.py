@@ -126,9 +126,9 @@ class GUI(CTk):
                 self.rowconfigure((0), weight=1)
                 self.columnconfigure((0,1,2), weight=1)
                 self.listBox = listBox
-                self.killBtn = CTkButton(self, text='', image=Icons((20, 20)).skull, command=self._killProcess, width=0, height=0, fg_color='gray20', hover_color='gray50')
-                self.restartBtn = CTkButton(self, text='', image=Icons((20, 20)).refresh, command=lambda: self._restartProcess(processListVar, title), width=0, height=0, fg_color='gray20', hover_color='gray50')
-                self.copyPIDBtn = CTkButton(self, text='', image=Icons((20, 20)).debug, command=self._copyPID, width=0, height=0, fg_color='gray20', hover_color='gray50')
+                self.killBtn = CTkButton(self, text='', image=Icons((20, 20)).skull, command=self._killProcess, width=0, height=0)
+                self.restartBtn = CTkButton(self, text='', image=Icons((20, 20)).refresh, command=lambda: self._restartProcess(processListVar, title), width=0, height=0)
+                self.copyPIDBtn = CTkButton(self, text='', image=Icons((20, 20)).debug, command=self._copyPID, width=0, height=0)
                 self.killBtn.grid(row=0, column=0, sticky=NSEW)
                 self.restartBtn.grid(row=0, column=1, sticky=NSEW)
                 self.copyPIDBtn.grid(row=0, column=2, sticky=NSEW)
