@@ -71,4 +71,8 @@ class SettingsWindow(CTkToplevel):
         with open("config/settings.json", 'w') as file:
             json.dump(data, file, indent=4)
         
-        customtkinter.set_appearance_mode(data)
+        theme_id = data['theme']
+        print(theme_id)
+
+        # update ui
+        customtkinter.set_appearance_mode(theme_id)

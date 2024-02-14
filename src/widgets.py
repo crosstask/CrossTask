@@ -7,7 +7,7 @@ from tkinter import *
 
 
 class ScrollableListbox(CTkFrame):
-    def __init__(self, master, appearance_mode:str='dark', listvariable=None):
+    def __init__(self, master, appearance_mode, listvariable=None):
         super().__init__(master, corner_radius=199)
         self.List = Listbox(self, listvariable=listvariable)
         self.scrollbar = CTkScrollbar(self, command=self.List.yview)
