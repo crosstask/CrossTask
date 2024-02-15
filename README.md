@@ -13,7 +13,7 @@
 
 ## 📌 Overview
 
-CrossTask is an OpenSource, cross-platform task manager written in Python. It utilizes essential dependencies like CTkListbox, customtkinter, and psutil.
+CrossTask is an OpenSource, cross-platform task manager written in Python. It utilizes essential dependencies like customtkinter and psutil.
 
 ## 🔍 Table of Contents
 
