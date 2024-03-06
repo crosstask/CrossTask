@@ -67,6 +67,21 @@ pip install -r requirements.txt
 python main.py
 ```
 
+## 📋 To-Do
+- [ ] More seperated loading of the tasks
+- [ ] Work on settings
+- [ ] Auto-reload implementation (integrated via settings)
+- [ ] More comments in code
+- [ ] GPU integration
+- [ ] Show detailed informations for system components
+- [ ] Program updater
+- [x] Binaries for latest release
+- [x] Responsive GUI
+- [x] Speed improvements loading tasks into list
+- [x] Task informations
+- [x] Kill processes
+- [x] Popups with developer and version informations
+
 ## 🙌 Contributors
 
 <p align="center">
