@@ -24,6 +24,8 @@ CrossTask is an OpenSource, cross-platform task manager written in Python. It ut
 
 - [🚀 Run Locally](#run-locally)
 
+- [📋 To-Do] (#do-do)
+
 - [🙌 Contributors](#contributors)
 
 - [📄 License](#license)
@@ -47,6 +49,7 @@ CrossTask is an OpenSource, cross-platform task manager written in Python. It ut
 - [packaging](https://pypi.org/project/packaging/): Provides functionality for working with Python packages, including parsing version numbers, comparing versions, and manipulating package metadata.
 - [pillow](https://python-pillow.org/): A fork of the Python Imaging Library (PIL), it provides image processing capabilities, including opening, manipulating, and saving various image file formats.
 - [customtkinter](https://github.com/ParthJadhav/customtkinter): A custom version of the tkinter library that adds additional functionalities and styling options to the standard tkinter package.
+
 ## 🚀 Run Locally
 
 1.Clone the CrossTask repository:
